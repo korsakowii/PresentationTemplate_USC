@@ -1,0 +1,51 @@
+---
+title: "Title"
+subtitle: "Subtitle"
+author: "Xiaoyu Yan"
+institute: "Institute"
+date: "`r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    css: ["usc.css","usc-fonts.css"]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: "4:3"
+# to convert html output into pdf, 
+# xaringan::decktape("file://.../filename.html", "filename.pdf", docker = FALSE)
+---
+```{r setup, include=FALSE}
+library(knitr)
+library(yaml)
+library(xaringanthemer)
+
+knitr::opts_chunk$set(
+	echo = FALSE,
+	fig.show = "hold",
+	out.width = "75%",
+	message = FALSE,
+	warning = FALSE,
+	paged.print = FALSE
+)
+#setwd("~/projects/")
+```
+
+```{r xaringan-panelset, include=FALSE, echo=FALSE}
+xaringanExtra::use_panelset()
+xaringanExtra::use_editable(expires = 1)
+xaringanExtra::style_panelset_tabs(foreground = "honeydew", background = "seagreen")
+```
+
+class: slide
+
+# Previous Research
+
+## Grad Thesis - Differential Methylation Analysis in Colon Tissues
+
+### Background
+
+### Method
+
+### Result

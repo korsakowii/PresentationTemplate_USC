@@ -1,0 +1,803 @@
+---
+title: "Title"
+subtitle: "Subtitle"
+author: "Xiaoyu Yan"
+institute: "Institute"
+date: "`r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    css: ["usc.css","usc-fonts.css"]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: "4:3"
+# to convert html output into pdf, 
+# xaringan::decktape("file://.../filename.html", "filename.pdf", docker = FALSE)
+---
+```{r setup, include=FALSE}
+library(knitr)
+library(yaml)
+library(rgdal)
+library(plotly)
+library(icon)
+library(plyr)
+library(ggforce)
+library(reshape2)
+library(tidyverse)
+library(xaringanthemer)
+
+knitr::opts_chunk$set(
+	echo = FALSE,
+	fig.show = "hold",
+	out.width = "75%",
+	message = FALSE,
+	warning = FALSE,
+	paged.print = FALSE
+)
+setwd("~/projects/job_interview/InterviewPre")
+```
+
+```{r xaringan-panelset, include=FALSE, echo=FALSE}
+xaringanExtra::use_panelset()
+xaringanExtra::use_editable(expires = 1)
+```
+
+class: slide
+
+# Content
+
+<br />
+## Personal Summary
+<br />
+## Topic 1
+<br />
+## Topic 2
+
+---
+class: slide
+
+# Personal Summary
+
+- 
+
+- 
+
+- 
+
+## Education
+.alignright[Year]
+University, City, Country
+Degree, Major
+
+.alignright[Year]
+University, City, Country
+Degree, Major
+
+
+## Work
+.alignright[Year]
+Position @Company
+
+.alignright[Year]
+Position @Company
+
+.alignright[Year]
+Position @Company
+
+---
+class: slide
+
+# Personal Summary
+
+## Timeline
+
+```{r echo=FALSE, out.height="75%", out.width="100%"}
+timeline_data <- data.frame(
+  #id      = 1:5,
+  content = c("Undergrad@BFU", "Undergrad RA", 
+              "Marketing DA Intern@Wiley",
+              "Grad@USC", "Grad RA"),
+  Start.Date   = c("2014-09-01", "2017-03-01", "2018-03-01",
+              "2018-08-20", "2019-07-01"),
+  End.Date     = c("2018-06-30", "2018-06-30", "2018-08-20", 
+              "2020-08-11", "2020-04-30"),
+  type    = c("Education", "Work", "Work", "Education", "Work")
+)
+
+library(lubridate)
+timeline_data$Start.Date <- as.Date(timeline_data$Start.Date)
+timeline_data$End.Date <- as.Date(timeline_data$End.Date)
+#knitr::kable(timeline_data[1:4,])
+
+label_column <- "content"
+categ_column <- "type"
+earliest_date_by_Position <-
+  timeline_data[timeline_data$Start.Date == ave(timeline_data$Start.Date, timeline_data$content, FUN = min), ]
+earliest_date_by_Position <-
+  earliest_date_by_Position[order(
+   earliest_date_by_Position$Start.Date,
+    earliest_date_by_Position$content, decreasing = TRUE), ]
+
+timeline_data$content <-
+  factor(timeline_data$content, levels = rev(as.character(unique(earliest_date_by_Position$content))))
+
+timeline_data$type <- as.factor(timeline_data$type)
+timeline_data <- timeline_data[!is.na(timeline_data$End.Date) & !is.na(timeline_data$Start.Date),]
+timeline_data <- droplevels(timeline_data)
+type_colours <- list("Education" = "#DC241f", "Work" = "#0087DC")
+
+## Order by the levels in timeline_data
+type_colours <- as.character(type_colours[levels(timeline_data$type)])
+
+gantt_labeler <- function(start_date = NA, end_date = NA, y_axis = NA, color = NA){
+  paste0(
+    "</br>",
+    "Position: ", y_axis, 
+    "</br>",
+    "Date Range: ", start_date," to ",end_date,
+    "</br>",
+    "Type: ", color
+  )
+}
+
+ggplot_timeline <- ggplot(
+  data = timeline_data,
+  aes(
+    x = Start.Date,
+    xend = End.Date,
+    y = eval(as.name(label_column)),
+    yend = eval(as.name(label_column)),
+    colour = eval(as.name(categ_column)),
+    text = gantt_labeler(start_date = Start.Date, 
+                         end_date = End.Date, 
+                         y_axis = eval(as.name(label_column)), 
+                         color = eval(as.name(categ_column)))
+  )
+)
+library(zoo)
+ggplotly(ggplot_timeline + 
+           geom_segment(size=3) + 
+           geom_vline(aes(xintercept = as.numeric(Sys.Date())), 
+                      size=0.3, #colour="#990000", 
+                      linetype=1, alpha=0.3) +
+           xlab("") + ylab("") + 
+           scale_colour_manual(name = "Type",values = type_colours) +
+           scale_x_date(breaks = seq(as.Date("2014-09-01"), 
+                                     as.Date("2021-03-01"), 
+                                     by="6 month")) +
+           theme(axis.text.x=element_text(angle = 30, hjust = 1),
+                 legend.title = element_blank()) +
+           annotate(geom="text", x=Sys.Date()-80, y=1, label=Sys.Date(), 
+                    #family='', fontface='', 
+                    #colour='', 
+                    size=3), 
+         tooltip = "text")
+
+```
+
+---
+class: slide
+
+# Topic 1
+
+## Project 1
+
+### Background
+
+---
+class: slide
+
+## Project 1
+
+### Method
+
+---
+class: slide
+
+## Project 1
+
+### Result
+
+.panelset[
+
+.panel[.panel-name[a]
+
+```{r out.width="75%", fig.show='hold'}
+#include_graphics("pic/UTmcmc.png")
+```
+]
+
+.panel[.panel-name[b]
+
+```{r out.width="50%", fig.show='hold'}
+#include_graphics("pic/UTsimu_dic.png")
+#include_graphics("pic/UTsimu_result.png")
+```
+]
+
+.panel[.panel-name[c]
+
+```{r out.width="50%", fig.show='hold'}
+#include_graphics("pic/UTreal_dic.png")
+#include_graphics("pic/UTreal_result.png")
+```
+]
+]
+
+---
+class: slide
+
+## Project 1
+
+### Conclusion
+
+---
+class: slide
+
+# Topic 1
+
+## Project 2
+
+### Background
+
+```{r out.width="30%", fig.show='hold'}
+#include_graphics("pic/GTchem.png")
+```
+
+```{r out.width="60%", fig.show='hold'}
+#include_graphics("pic/GToccu.png")
+```
+
+---
+class: slide
+
+## Project 2
+
+### Method
+
+---
+class: slide
+
+### Result
+
+.panelset[
+
+.panel[.panel-name[a]
+
+```{r out.width="50%", fig.show='hold'}
+#include_graphics("pic/GTqc1.png")
+#include_graphics("pic/GTqc2.png")
+#include_graphics("pic/GTpca.png")
+```
+]
+
+.panel[.panel-name[b]
+
+```{r out.width="70%", fig.show='hold'}
+#include_graphics("pic/GTdist.png")
+```
+]
+
+.panel[.panel-name[c]
+
+```{r out.width="70%", fig.show='hold'}
+#include_graphics("pic/GTbox.png")
+```
+]
+
+.panel[.panel-name[d]
+
+```{r out.width="50%", fig.show='hold'}
+#include_graphics("pic/GTgenes.png")
+#include_graphics("pic/GTgene.png")
+```
+]
+
+.panel[.panel-name[e]
+
+```{r out.width="50%", fig.show='hold'}
+#include_graphics("pic/GTdmr.png")
+```
+
+]
+]
+
+---
+class: slide
+
+## Project 2
+
+### Conclusion
+
+---
+class: slide
+
+# Topic 2
+
+## Background
+<br />
+### Map Projection
+<br />
+### Zone Level
+<br />
+
+## Statistical Map
+<br />
+
+### Basic Statistical Map
+<br />
+
+### Advanced Statistical Map
+
+---
+class: slide
+
+## Introduction
+
+### Spatial Data 
+
+### Map Projection
+
+.panelset[
+
+.panel[.panel-name[Mercator]
+
+]
+
+.panel[.panel-name[Albers]
+
+]
+
+.panel[.panel-name[Azimuthal]
+
+```{r out.width="65%"}
+```
+
+]
+]
+
+---
+class: slide
+
+## Introduction
+
+### Zone Level
+
+.panelset[
+
+.panel[.panel-name[Province]
+
+```{r message=FALSE, warning=FALSE, results=FALSE, out.width="65%", fig.keep="all"}
+```
+
+]
+
+.panel[.panel-name[City]
+
+```{r message=FALSE, warning=FALSE, results=FALSE, out.width="65%", fig.keep="all"}
+```
+]
+
+.panel[.panel-name[County]
+
+```{r message=FALSE, warning=FALSE, results=FALSE, out.width="65%", fig.keep="all"}
+```
+]
+]
+
+---
+class: slide, center
+
+#### Local Map
+
+```{r local, out.width = "75%"}
+#include_graphics("pic/SPlocal.png")
+```
+
+---
+class: slide
+
+## Statistical Map
+
+### Dot Distribution Map / Labels on Map
+
+.panelset[
+
+.panel[.panel-name[Dot]
+
+```{r echo=FALSE, fig.show="hold", message=FALSE, warning=FALSE, out.width="60%", results=FALSE, fig.show="hold"}
+```
+]
+
+.panel[.panel-name[Label]
+
+```{r echo=FALSE, fig.show="hold", message=FALSE, warning=FALSE, out.width="60%", results=FALSE, fig.show="hold"}
+```
+]
+]
+
+---
+class: slide
+
+### Bubble/Pie/Bar on Map
+
+.pull-left[
+
+#### One Category
+
+.panelset[
+
+.panel[.panel-name[Size]
+
+```{r echo=FALSE, out.width="100%", message=FALSE, warning=FALSE, results=FALSE, fig.show="all"}
+```
+]
+
+.panel[.panel-name[Size+Color]
+
+```{r echo=FALSE, out.width="100%", message=FALSE, warning=FALSE, results=FALSE, fig.show="all"}
+```
+]
+]
+]
+
+.pull-right[
+
+#### Multicategory
+
+.panelset[
+
+.panel[.panel-name[Horizonal]
+
+```{r eval=FALSE, fig.show="all", message=FALSE, warning=FALSE, include=FALSE, out.width="35%", results=FALSE}
+```
+
+```{r echo=FALSE, out.width="100%", message=FALSE, warning=FALSE, results=FALSE, fig.show="all"}
+```
+]
+
+.panel[.panel-name[Vertical]
+
+```{r eval=FALSE, fig.show="all", message=FALSE, warning=FALSE, include=FALSE, out.width="35%", results=FALSE}
+```
+
+```{r echo=FALSE, out.width="100%", message=FALSE, warning=FALSE, results=FALSE, fig.show="hold"}
+```
+]
+
+.panel[.panel-name[Bar]
+
+```{r echo=FALSE, out.width="100%", message=FALSE, warning=FALSE, results=FALSE, fig.show="all"}
+```
+]
+
+.panel[.panel-name[Nightingale]
+
+```{r eval=FALSE, fig.show="all", message=FALSE, warning=FALSE, include=FALSE, out.width="100%", results=FALSE}
+```
+
+```{r echo=FALSE, out.width="100%", message=FALSE, warning=FALSE, results=FALSE, fig.show="all"}
+```
+]
+
+.panel[.panel-name[Dot+Pie]
+
+```{r echo=FALSE, out.width="100%", fig.show = "animate", message=FALSE, warning=FALSE, results=FALSE, fig.show="all"}
+
+```
+]
+]
+]
+
+.pull-right[
+
+#### Multicategory
+
+.panelset[
+
+.panel[.panel-name[horizonal]
+
+```{r echo=FALSE, out.width="35%", message=FALSE, warning=FALSE, results=FALSE, fig.show="all"}
+```
+]
+
+.panel[.panel-name[vertical]
+
+```{r echo=FALSE, out.width="35%", message=FALSE, warning=FALSE, results=FALSE, fig.show="all"}
+```
+]
+
+.panel[.panel-name[Nightingale]
+
+```{r echo=FALSE, out.width="35%", message=FALSE, warning=FALSE, results=FALSE, fig.show="all"}
+```
+]
+]
+]
+<br />
+.center[
+
+.panelset[
+
+.panel[.panel-name[horizonal]
+
+```{r echo=FALSE, out.width="45%", message=FALSE, warning=FALSE, results=FALSE, fig.show="all"}
+```
+]
+
+.panel[.panel-name[vertical]
+
+```{r echo=FALSE, out.width="45%", message=FALSE, warning=FALSE, results=FALSE, fig.show="hold"}
+```
+]
+]
+]
+
+---
+class: slide
+
+### Voronoi Diagram
+
+.panelset[
+
+.panel[.panel-name[a]
+
+]
+
+.panel[.panel-name[b]
+
+
+]
+]
+
+---
+class: slide
+
+### Connection Map
+
+.center[
+
+.panelset[
+
+.panel[.panel-name[Line]
+
+]
+
+.panel[.panel-name[Curve]
+
+]
+
+.panel[.panel-name[None-directional]
+
+]
+
+.panel[.panel-name[Directional]
+
+]
+]
+]
+
+---
+class: slide
+
+### Isoline Map
+
+.alignleft[
+
+#### Kernel Density Estimation
+
+.panelset[
+
+.panel[.panel-name[Dots]
+
+]
+
+.panel[.panel-name[Smooth]
+
+]
+
+.panel[.panel-name[Result]
+
+```{r echo=FALSE, out.width="40%", message=FALSE, warning=FALSE, results=FALSE, fig.show="all"}
+```
+]
+]
+]
+
+.pull-left[
+
+#### Polynomial Approximation
+
+.panelset[
+
+.panel[.panel-name[Dots]
+
+]
+
+.panel[.panel-name[Smooth]
+
+]
+
+.panel[.panel-name[Result]
+
+]
+]
+]
+
+.pull-right[
+
+#### Locally Weighted Smoothing
+
+.panelset[
+
+.panel[.panel-name[Dots]
+
+]
+
+.panel[.panel-name[Smooth]
+
+]
+
+.panel[.panel-name[Result]
+
+]
+]
+]
+
+---
+class: slide
+
+### Ridgeline Map
+
+.pull-left[
+
+]
+
+.pull-right[
+
+]
+
+---
+class: slide
+
+### Pixel Map
+
+.pull-left[
+
+]
+
+.pull-right[
+
+]
+
+---
+class: slide
+
+### 3D Bar Map
+
+.pull-left[
+
+]
+
+.pull-right[
+
+]
+
+---
+class: slide, center
+
+### Tilegram
+
+.panelset[
+
+.panel[.panel-name[Rectangle]
+
+]
+
+.panel[.panel-name[Circle]
+
+]
+
+.panel[.panel-name[Hexagon]
+
+]
+
+.panel[.panel-name[Choropleth]
+
+]
+]
+
+---
+class: slide
+
+### Density-equalizing (contiguous) cartogram
+
+.center[
+
+]
+
+.pull-left[
+
+]
+
+.pull-right[
+
+]
+
+---
+class: slide
+
+class: slide
+
+### Geofaceting
+
+.panelset[
+
+.panel[.panel-name[Choropleth]
+
+]
+
+.panel[.panel-name[Region]
+
+]
+
+.panel[.panel-name[Simplification]
+
+]
+
+.panel[.panel-name[Time]
+
+]
+]
+
+---
+class: slide
+
+# Conclusion
+
+---
+class: center, middle
+background-size: 55px
+background-position: 9% 15%
+
+# Thanks!
+### Contact
+`r icon::ii("email")` email
+`r icon::ii("iphone")` phone number
+`r icon::ii("social-github")` @username
+
+```{r eval=FALSE, fig.align='center', include=FALSE, out.height="45%", out.width="60%"}
+library(ggmap)
+register_google(key = "AIzaSyCME84C5t6Al2SBbYLhNPyuxg3reYwghCc")
+dc <- geocode(location = c("1228 West 27th Street, Los Angeles", 
+                           "University of Southern California", 
+                           "2001 N Soto St, Los Angeles"))
+dc$loc = c("Home", "USC", "USC-Biostatistics")
+library(leaflet)
+homeIcon <- makeIcon(
+  iconUrl = "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/240/openmoji/252/house_1f3e0.png",
+  iconWidth = 38, iconHeight = 38,
+  iconAnchorX = 19, iconAnchorY = 19
+)
+schoolIcon <- makeIcon(
+  iconUrl = "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/240/openmoji/252/school_1f3eb.png",
+  iconWidth = 38, iconHeight = 38,
+  iconAnchorX = 19, iconAnchorY = 19
+)
+
+leaflet(options = leafletOptions(
+                    # Set minZoom and dragging 
+                    minZoom = 10, dragging = TRUE)) %>%
+  #addProviderTiles("Stamen.Watercolor") %>% 
+  addProviderTiles("Stamen.TonerHybrid", 
+                   options = providerTileOptions(opacity = 0.5)) %>%
+  #addTiles %>% # Add default OpenStreetMap map tiles
+  addMarkers(lng = dc$lon[1], lat = dc$lat[1], popup = dc$loc[1], icon = homeIcon) %>% 
+  addMarkers(lng = dc$lon[2], lat = dc$lat[2], popup = dc$loc[2], icon = schoolIcon) %>%
+  addMarkers(lng = dc$lon[3], lat = dc$lat[3], popup = dc$loc[3], icon = schoolIcon) %>%
+  setView(lng = dc$lon[1], lat = dc$lat[1], zoom = 14) # Los Angeles
+```
+
+#### Slides created with [xaringan](https://github.com/yihui/xaringan) and [RMarkdown](https://rmarkdown.rstudio.com/).
