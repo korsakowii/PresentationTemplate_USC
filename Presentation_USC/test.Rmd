@@ -1,7 +1,7 @@
 ---
 title: "Title"
 subtitle: "Subtitle"
-author: "Xiaoyu Yan"
+author: "Author"
 institute: "Institute"
 date: "`r Sys.Date()`"
 output:
@@ -40,12 +40,4 @@ xaringanExtra::style_panelset_tabs(foreground = "honeydew", background = "seagre
 
 class: slide
 
-# Previous Research
-
-## Grad Thesis - Differential Methylation Analysis in Colon Tissues
-
-### Background
-
-### Method
-
-### Result
+You can test each of your slides here.
