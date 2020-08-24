@@ -19,12 +19,8 @@ output:
 ```{r setup, include=FALSE}
 library(knitr)
 library(yaml)
-library(rgdal)
-library(plotly)
-library(icon)
-library(plyr)
-library(ggforce)
-library(reshape2)
+library(icon) # insert icons
+library(plotly) # interactive charts
 library(tidyverse)
 library(xaringanthemer)
 
